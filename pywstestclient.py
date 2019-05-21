@@ -245,8 +245,8 @@ def get_sts_token(current_refresh_token):
     if r.status_code != 200:
         print('EDP-GW authentication result failure:', r.status_code, r.reason)
         print('Text:', r.text)
-        if r.status_code == 401 and current_refresh_token:
-            # Refresh token may have expired. Try using our password.
+        if r.status_code in [401,400] and current_refresh_token:
+            # Refresh token may have expired. Try again using machinedID + password.
             return get_sts_token(None)
         return None, None, None
 
