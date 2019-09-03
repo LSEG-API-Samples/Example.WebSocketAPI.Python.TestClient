@@ -100,7 +100,7 @@ Below are a few example scenarios with sample arguments
 **MarketPrice request for RICs read from file srics.txt (one RIC per line)**  
     -H ads1 -f srics.txt -u umer.nalla -X -l log.out 
 
-**MarketPrice View (FIDs TRDPRC_1,BID,ASK) request for RICs read from file srics.txt **  
+**MarketPrice View (FIDs TRDPRC_1,BID,ASK) request for RICs read from file srics.txt**  
     -H ads1 -f srics.txt -vfids 6,22,25 -u umer.nalla -X -l log.out 
 
 **MarketByOrder request for RICs read from file srics.txt (one RIC per line)**  
