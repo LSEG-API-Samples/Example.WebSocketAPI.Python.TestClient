@@ -20,20 +20,20 @@ from threading import Thread, Event
 
 # Python example that uses the Refinitiv Websocket interface to facilitate the consumption of realtime data.
 # This example is meant to be a simplistic version of the 'rmdstestclient' tool and illustrates a variety of scenarios such as:  
-#  EDP or ADS connection, Batch / View Request, Streaming / Snapshot, Reuters Domain Models
+#  RDP or ADS connection, Batch / View Request, Streaming / Snapshot, Reuters Domain Models
 
 # Global Variables
 simpleRics=None
 extRics=None
 opts=None
 ws_app=None
-auth_path = 'auth/oauth2/beta1/token'
+auth_path = 'auth/oauth2/v1/token'
 sts_token = ''
 refresh_token = ''
 client_secret = ''
 expire_time = 0
 scope = 'trapi'
-edp_mode = False
+rdp_mode = False
 
 # Read RICs from file '-f' option i.e. no domain specified 
 # so will be used in conjunction with Domain Model parameter
@@ -83,15 +83,18 @@ def parse_rics():
         readExtRicsFile()
 
 def validate_options():
-    global opts, edp_mode
+    global opts, rdp_mode
 
-    # If password is specified then we are going to attempt EDP connection
+    # If password is specified then we are going to attempt RDP connection
     if opts.password:
-        # Must have authorisation server specified for EDP connection
+        # Must have authorisation server specified for RDP connection
         if (not opts.authHostname) or (not opts.authPort):
-            print("For EDP connection, Authorisation Host + Port are required")
+            print("For RDP connection, Authorisation Host + Port are required")
             return False
-        edp_mode = True
+        if (not opts.clientid):
+            print("For RDP connection, ClientID/AppKey is required")
+            return False
+        rdp_mode = True
 
     # Dont allow both FIDS and Field Names to be specifed for View request
     if ((opts.viewFIDs) and (opts.viewNames)):  
@@ -141,7 +144,7 @@ def parse_args(args=None):
                         default='ads1')
     parser.add_argument('-ah', dest='authHostname',
                         help='authorization server hostname',
-                        default='api.edp.thomsonreuters.com')
+                        default='api.refinitiv.com')
     parser.add_argument('-p', dest='port',
                         help='port of the server',
                         type=int,
@@ -154,7 +157,9 @@ def parse_args(args=None):
                         help='login user name',
                         default=getpass.getuser())
     parser.add_argument('-pw', dest='password',
-                        help='EDP user password')
+                        help='RDP user password')
+    parser.add_argument('-c', dest='clientid',
+                        help='RDP ClientID aka AppKey - generated using AppKey Generator')
     parser.add_argument('-pos', dest='position',
                         help='application position',
                         default=socket.gethostbyname(socket.gethostname()))
@@ -235,15 +240,15 @@ def get_sts_token(current_refresh_token):
         r = requests.post(url,
                           headers={'Accept': 'application/json'},
                           data=data,
-                          auth=(opts.user, client_secret),
+                          auth=(opts.clientid, client_secret),
                           verify=True)
 
     except requests.exceptions.RequestException as e:
-        print('EDP-GW authentication exception failure:', e)
+        print('RDP-GW authentication exception failure:', e)
         return None, None, None
 
     if r.status_code != 200:
-        print('EDP-GW authentication result failure:', r.status_code, r.reason)
+        print('RDP-GW authentication result failure:', r.status_code, r.reason)
         print('Text:', r.text)
         if r.status_code in [401,400] and current_refresh_token:
             # Refresh token may have expired. Try again using machinedID + password.
@@ -251,7 +256,7 @@ def get_sts_token(current_refresh_token):
         return None, None, None
 
     auth_json = r.json()
-    print("EDP-GW Authentication succeeded. RECEIVED:")
+    print("RDP-GW Authentication succeeded. RECEIVED:")
     print(json.dumps(auth_json, sort_keys=True, indent=2, separators=(',', ':')))
 
     return auth_json['access_token'], auth_json['refresh_token'], auth_json['expires_in']
@@ -275,18 +280,18 @@ if __name__ == '__main__':
             sys.stdout = orig_stdout
             sys.exit(2)
 
-    if edp_mode:    # Are we going to connect to EDP
+    if rdp_mode:    # Are we going to connect to RDP
         sts_token, refresh_token, expire_time = get_sts_token(None)
         if not sts_token:
             print("Could not get authorisaton token")
             sys.exit(1)
 
-    # Set our EDP or ADS Login request credentials
+    # Set our RDP or ADS Login request credentials
     market_data.set_Login(opts.user,
                         opts.appID,
                         opts.position,
                         sts_token,
-                        edp_mode)
+                        rdp_mode)
 
     market_data.dumpRcvd = opts.dump
     market_data.dumpPP = opts.showPingPong
@@ -310,8 +315,8 @@ if __name__ == '__main__':
         market_data.set_viewList(vList)
 
     # Start websocket handshake
-    # Use 'wss' for edp connection or 'ws' for ADS connection
-    protocol = "wss" if edp_mode else "ws"
+    # Use 'wss' for rdp connection or 'ws' for ADS connection
+    protocol = "wss" if rdp_mode else "ws"
     ws_address = protocol +"://{}:{}/WebSocket".format(opts.host, opts.port)
     print("Connecting to WebSocket " + ws_address + " ...")
     ws_app = websocket.WebSocketApp(ws_address, header=['User-Agent: Python'],
@@ -345,8 +350,8 @@ if __name__ == '__main__':
             
             time.sleep(1)
 
-            # If we are connected to EDP, check if its time to re-authorise
-            if ((edp_mode) and time.time()>=reissue_token_time):
+            # If we are connected to RDP, check if its time to re-authorise
+            if ((rdp_mode) and time.time()>=reissue_token_time):
                 sts_token, refresh_token, expire_time = get_sts_token(refresh_token)
                 if not sts_token:
                     print("Could not get authorisaton token")

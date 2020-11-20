@@ -9,7 +9,7 @@
 
 Python example that uses the Refinitiv Websocket interface to facilitate the consumption of realtime data.
 This example is meant to be a simplistic version of the 'rmdstestclient' tool and illustrates a variety of scenarios such as:  
-* EDP or ADS connection
+* RDP or ADS connection
 * Batch / View Request
 * Streaming / Snapshot
 * Reuters Domain Models
@@ -31,10 +31,10 @@ The source code presented in this project has been written by Refinitiv solely 
       - To Login to an ADS server 
         - the hostname/ip + port number of the ADS  
         - DACS username  
-      - For EDP connection  
-        - EDP server data url
-        - EDP Authentication server url
-        - Your EDP username and password
+      - For RDP connection  
+        - RDP server data url
+        - RDP Authentication server url
+        - Your RDP username and password
   
 
 ## <a id="arguments"></a>Optional arguments:  
@@ -44,12 +44,13 @@ The source code presented in this project has been written by Refinitiv solely 
 |-----------|------------------------------------------|
 | -h        | Show this help message and exit          |
 | -S        | Service name to request from (default: None - however, server typically has default) |
-| -H        | Hostname of ADS server or EDP endpoint (default: ads1) |
-| -ah       | Authorization server (default: api.edp.thomsonreuters.com) |
-| -p        | Port of the ADS server or EDP (default: 15000) |
+| -H        | Hostname of ADS server or RDP endpoint (default: ads1) |
+| -ah       | Authorization server (default: api.refinitiv.com) |
+| -p        | Port of the ADS server or RDP (default: 15000) |
 | -ap       | Port of the authorisation server (default: 443) |
 | -u        | Login user name (default: your local os username) |
-| -pw       | Specify EDP user password to connect to EDP (default: None) |
+| -pw       | Specify RDP user password to connect to RDP (default: None) |
+| -c        | RDP ClientID aka AppKey - generated using AppKey Generator (default: None) |
 | -pos      | Application position (default: your local IP address) |
 | -aid      | Application Identifier (default: 256)    |
 | -items    | comma-separated list of RICs (default: None) |
@@ -76,8 +77,8 @@ The source code presented in this project has been written by Refinitiv solely 
 ## <a id="runtime"></a>Example runtime scenarios  
 Below are a few example scenarios with sample arguments
 
-**Connect to EDP, request MarketPrice items from default service and display summary stats**  
-    -H emea-1.pricing.streaming.edp.thomsonreuters.com -p 443 -items VOD.L,BT.L -u \<EDP Username\> -pw \<EDP Password\>   
+**Connect to RDP, request MarketPrice items from default service and display summary stats**  
+    -H emea-1.pricing.streaming.edp.thomsonreuters.com -p 443 -items VOD.L,BT.L -u \<RDP Username\> -pw \<RDP Password\> -c \<ClientID/AppKey\>  
     
 **Connect to ADS, request MarketPrice items from ELEKTRON_DD service and display summary stats**  
     -S ELEKTRON_DD -H ads1 -items VOD.L,MSFT.O,TRI.N -u umer.nalla
@@ -116,7 +117,7 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ### <a id="authors"></a>Authors
 
-* **Umer Nalla** - Release 1.0.  *Initial version*
+* **Umer Nalla** - Release 1.1.  *Partial Rebrand version*
 
 ### <a id="license"></a>License
 

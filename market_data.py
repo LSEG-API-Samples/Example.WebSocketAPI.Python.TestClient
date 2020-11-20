@@ -33,7 +33,7 @@ simpleRicList = []    # List of RICs to request
 domainRicList =[]   # List of RICs with Domain specified
 viewList = []   # List of Fields (FIDs or Names) to use in View Request
 domainModel = None  # Websocket interface defaults to MarketPrice if not specified
-serviceName = None  # EDP or ADS typically has a default service configured
+serviceName = None  # RDP or ADS typically has a default service configured
 snapshot = False    # Make Snapshot request (rather than the default streaming)
 dumpRcvd = False    # Dump messages received from server
 dumpPP = False      # Dump the incoming Ping and outgoing Pong messages
@@ -49,11 +49,11 @@ pingCnt = 0     # Ping messages (= Pongs sent)
 closedCnt = 0   # Specifically Closed status message (e.g. item not found)
 logged_in = False # Did we get a successful Login response yet
 
-auth_token = None       # Autorization token for EDP connections
+auth_token = None       # Autorization token for RDP connections
 web_socket_app = None   
 web_socket_open = False
 shutdown_app = False    # flag to indicate shutdown
-edp_mode = False        # Are connecting to EDP
+rdp_mode = False        # Are connecting to RDP
 
 # Dump some basic stats to console
 def print_stats():
@@ -66,12 +66,12 @@ def print_stats():
 
 # Various Login related parameters
 def set_Login(u,a,p,t,e):
-    global user, app_id, position, auth_token, edp_mode
+    global user, app_id, position, auth_token, rdp_mode
     app_id=a
     user=u
     position=p
     auth_token=t
-    edp_mode=e
+    rdp_mode=e
 
 # Data request related parameters
 def set_Request_Attr(service,rList,rdm,snap, dmList):
@@ -250,11 +250,11 @@ def reissue_token(ws, token):
     auth_token = token
     send_login_request(ws, True)
 
-# Send a Login request - for ADS or EDP
+# Send a Login request - for ADS or RDP
 def send_login_request(ws, is_refresh_token=False):
     """ Generate a login request from command line data (or defaults) and send """
     
-    # Set common values for EDP and ADS login
+    # Set common values for RDP and ADS login
     # Note StreamID is 1
     login_json = {
         'ID': 1,
@@ -269,8 +269,8 @@ def send_login_request(ws, is_refresh_token=False):
     login_json['Key']['Elements']['ApplicationId'] = app_id
     login_json['Key']['Elements']['Position'] = position
 
-    # EDP login request authentication token / ADS requires username
-    if (edp_mode):  # Connected to EDP
+    # RDP login request authentication token / ADS requires username
+    if (rdp_mode):  # Connected to RDP
         login_json['Key']['NameType'] = 'AuthnToken'
         login_json['Key']['Elements']['AuthenticationToken'] = auth_token
         # If the auth token is a refresh token, this is not our first login attempt.
