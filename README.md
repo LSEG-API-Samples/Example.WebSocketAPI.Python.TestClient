@@ -1,3 +1,6 @@
+<a href="https://developers.refinitiv.com" target="_blank">Refinitiv Developer Portal</a>
+<a href="https://community.developers.refinitiv.com/questions/index.html" target="_blank">Refinitiv Developer Community Forums</a>
+
 # Python Websocket API Test Client  
 
 * [Overview](#overview)
