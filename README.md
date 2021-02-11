@@ -12,7 +12,7 @@
 
 Python example that uses the Refinitiv Websocket interface to facilitate the consumption of realtime data.
 This example is meant to be a simplistic version of the 'rmdstestclient' tool and illustrates a variety of scenarios such as:  
-* RDP or ADS connection
+* Refinitiv Real-Time Optimized or ADS connection
 * Batch / View Request
 * Streaming / Snapshot
 * Reuters Domain Models
@@ -34,8 +34,8 @@ The source code presented in this project has been written by Refinitiv solely 
       - To Login to an ADS server 
         - the hostname/ip + port number of the ADS  
         - DACS username  
-      - For RDP connection  
-        - RDP server data url
+      - For RRTO connection  
+        - RRTO server data url
         - RDP Authentication server url
         - Your RDP username and password
   
@@ -47,7 +47,7 @@ The source code presented in this project has been written by Refinitiv solely 
 |-----------|------------------------------------------|
 | -h        | Show this help message and exit          |
 | -S        | Service name to request from (default: None - however, server typically has default) |
-| -H        | Hostname of ADS server or RDP endpoint (default: ads1) |
+| -H        | Hostname of ADS server or RRTO endpoint (default: ads1) |
 | -ah       | Authorization server (default: api.refinitiv.com) |
 | -p        | Port of the ADS server or RDP (default: 15000) |
 | -ap       | Port of the authorisation server (default: 443) |
@@ -80,8 +80,8 @@ The source code presented in this project has been written by Refinitiv solely 
 ## <a id="runtime"></a>Example runtime scenarios  
 Below are a few example scenarios with sample arguments
 
-**Connect to RDP, request MarketPrice items from default service and display summary stats**  
-    -H emea-1.pricing.streaming.edp.thomsonreuters.com -p 443 -items VOD.L,BT.L -u \<RDP Username\> -pw \<RDP Password\> -c \<ClientID/AppKey\>  
+**Connect to RRTO, request MarketPrice items from default service and display summary stats**  
+    -H amer-2-t3.streaming-pricing-api.refinitiv.com -p 443 -items VOD.L,BT.L -u \<RDP Username\> -pw \<RDP Password\> -c \<ClientID/AppKey\>  
     
 **Connect to ADS, request MarketPrice items from ELEKTRON_DD service and display summary stats**  
     -S ELEKTRON_DD -H ads1 -items VOD.L,MSFT.O,TRI.N -u umer.nalla
