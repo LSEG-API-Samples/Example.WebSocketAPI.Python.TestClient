@@ -31,7 +31,8 @@ auth_path = 'auth/oauth2/v1/token'
 sts_token = ''
 refresh_token = ''
 client_secret = ''
-expire_time = 0
+expire_time = '0'
+original_expire_time = '0'; 
 scope = 'trapi'
 rdp_mode = False
 
@@ -286,6 +287,8 @@ if __name__ == '__main__':
             print("Could not get authorisaton token")
             sys.exit(1)
 
+    original_expire_time = expire_time
+    
     # Set our RDP or ADS Login request credentials
     market_data.set_Login(opts.user,
                         opts.appID,
@@ -356,6 +359,13 @@ if __name__ == '__main__':
                 if not sts_token:
                     print("Could not get authorisaton token")
                     break
+                if int(expire_time) != int(original_expire_time):
+                    print('expire time changed from ' + str(original_expire_time) + 's to ' + str(expire_time) + 's; retry with password')
+                    sts_token, refresh_token, expire_time = get_sts_token(None)
+                    if not sts_token:
+                        print("Could not get Refresh token")
+                        break
+                    original_expire_time = expire_time
                 if market_data.logged_in:
                     market_data.reissue_token(ws_app,sts_token)
                 # Reset the token reissue time
